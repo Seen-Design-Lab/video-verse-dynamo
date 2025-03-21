@@ -17,6 +17,7 @@ const Index = () => {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const playerRef = useRef<PlayerRef>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
   const handleVideoUpload = (file: File) => {
     const url = URL.createObjectURL(file);
@@ -38,18 +39,18 @@ const Index = () => {
   
   const handleTimeUpdate = (newTime: number) => {
     setCurrentTime(newTime);
-    if (playerRef.current) {
-      playerRef.current.seekTo(newTime * 1000);
+    if (videoRef.current) {
+      videoRef.current.currentTime = newTime;
     }
   };
   
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
-    if (playerRef.current) {
+    if (videoRef.current) {
       if (!isPlaying) {
-        playerRef.current.play();
+        videoRef.current.play();
       } else {
-        playerRef.current.pause();
+        videoRef.current.pause();
       }
     }
   };
@@ -67,6 +68,21 @@ const Index = () => {
     toast.success(`Video trimmed from ${startTime.toFixed(2)}s to ${endTime.toFixed(2)}s`);
   };
   
+  // Update video currentTime when it's playing
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    
+    const updateTime = () => {
+      setCurrentTime(video.currentTime);
+    };
+    
+    video.addEventListener('timeupdate', updateTime);
+    return () => {
+      video.removeEventListener('timeupdate', updateTime);
+    };
+  }, [videoSrc]);
+  
   return (
     <div className="min-h-screen bg-background flex flex-col p-6">
       <header className="text-center mb-8">
@@ -78,22 +94,12 @@ const Index = () => {
         <div className="flex-1 flex flex-col gap-4">
           {videoSrc ? (
             <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-              <Player
-                ref={playerRef}
-                durationInFrames={Math.floor(videoDuration * 30)} // Assuming 30fps
-                compositionWidth={1920}
-                compositionHeight={1080}
-                fps={30}
-                style={{ width: '100%', height: '100%' }}
-                autoPlay={isPlaying}
-                loop={false}
-              >
-                <video 
-                  src={videoSrc} 
-                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                  muted
-                />
-              </Player>
+              <video 
+                ref={videoRef}
+                src={videoSrc} 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                muted
+              />
             </div>
           ) : (
             <VideoUploader onUpload={handleVideoUpload} />
