@@ -1,9 +1,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Input } from "@/components/ui/input";
-import { Player, PlayerRef } from "@remotion/player";
 import { toast } from "sonner";
 import VideoUploader from "@/components/VideoUploader";
 import VideoControls from "@/components/VideoControls";
@@ -16,10 +13,10 @@ const Index = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
-  const playerRef = useRef<PlayerRef>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   
   const handleVideoUpload = (file: File) => {
+    console.log("Video upload triggered", file);
     const url = URL.createObjectURL(file);
     setVideoSrc(url);
     
@@ -34,6 +31,7 @@ const Index = () => {
     video.onloadedmetadata = () => {
       setVideoDuration(video.duration);
       setEndTime(video.duration);
+      console.log("Video metadata loaded", video.duration);
     };
   };
   
@@ -98,7 +96,9 @@ const Index = () => {
                 ref={videoRef}
                 src={videoSrc} 
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                controls={false}
                 muted
+                playsInline
               />
             </div>
           ) : (

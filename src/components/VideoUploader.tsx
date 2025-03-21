@@ -70,10 +70,12 @@ const VideoUploader = ({ onUpload }: VideoUploaderProps) => {
       <p className="text-muted-foreground mb-4 text-center">
         Supported formats: MP4, WebM, AVI, MOV
       </p>
-      <label htmlFor="video-upload">
-        <div className="cursor-pointer">
-          <Button>Select Video</Button>
-        </div>
+      <div>
+        <Button 
+          onClick={() => document.getElementById('video-upload')?.click()}
+        >
+          Select Video
+        </Button>
         <Input
           id="video-upload"
           type="file"
@@ -81,7 +83,7 @@ const VideoUploader = ({ onUpload }: VideoUploaderProps) => {
           className="hidden"
           onChange={handleFileChange}
         />
-      </label>
+      </div>
     </div>
   );
 };
