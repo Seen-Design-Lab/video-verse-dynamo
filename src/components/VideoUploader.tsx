@@ -71,9 +71,9 @@ const VideoUploader = ({ onUpload }: VideoUploaderProps) => {
         Supported formats: MP4, WebM, AVI, MOV
       </p>
       <label htmlFor="video-upload">
-        <Button as="span" className="cursor-pointer">
-          Select Video
-        </Button>
+        <div className="cursor-pointer">
+          <Button>Select Video</Button>
+        </div>
         <Input
           id="video-upload"
           type="file"
